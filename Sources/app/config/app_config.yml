@@ -1,0 +1,90 @@
+imageCapture:
+  path:
+    - /data/Datasety_termo/FLIR_E6_Yawning/3_Man_Glasses1_Normal/Jpg
+    - /data/Datasety_termo/FLIR_E6_Yawning/3_Man_Glasses1_Yawning/Jpg
+    - /data/Datasety_termo/FLIR_E6_Yawning/1_Man_Glasses2_Yawning/Jpg
+    - /data/Datasety_termo/FLIR_E6_Yawning/1_Man_Glasses1_Yawning/Jpg
+  valid_ext: jpg
+  # alt_ext: tif
+
+yawnDetector:
+  feature_image_size: [48, 48]
+  sequence_length: 48
+  model:
+    seq_len: 48
+    batch_size: 32
+    criterion: CrossEntropyLoss
+    n_features: 900
+    hidden_size: 600
+    num_layers: 1
+    dropout: 0.2
+    learning_rate: 0.001
+    weights: '../lstm/runs/yawning_4folds_0th/version_0/checkpoints/epoch=53_acc-val_acc=0.96_f1-val_f1=0.96.ckpt'
+
+faceDetector:
+  weights: "../yolov8-face/runs/pose/best_yolov8-lite-t-pose-stematt-bifpn-t/weights/best.pt"
+  kpts_split: # 54 kpts
+    chin: [8]
+    nose: [30]
+    left_eye: [36, 39]
+    right_eye: [42, 45]
+    mouth: [48, 50, 49, 51]
+  args:
+    conf: 0.7
+    iou: 0.6
+    imgsz: [256, 320]
+
+faceTracker:
+  tracker: simple
+  max_disappeared: 300
+  max_distance: 300
+
+headPoseEstimator:
+  estimator:
+    filename: models/headPoseEstimation/model_54.txt
+  machine:
+    # head_offset: [0, 0, 0]
+    head_offset: [19, 9, -2.5]
+    stability_threshold: 0.5
+    stability_len: 10
+    max_history: 100
+    head_drop_threshold: 1
+    distraction_threshold: 10
+    
+  vis_image: vis_image
+
+metrics:
+  perlook:
+    normal_pose: normal
+    history: 120
+  perstatic:
+    diff: 
+      yaw: 5.0
+      pitch: 5.0
+      roll: 10.0
+    history: 30
+  yawn_freq:
+    history: 4500
+    yawn_len: 25
+    window: 5
+  head_drop_freq:
+    history: 4500
+    window: 5
+
+alarms:
+  fatigue:
+    perlook: 0.1
+    yawn_freq: 1.5
+    head_drop_freq: 1.0
+    threshold: 1.1
+  distraction:
+    perlook: 1.0
+    yawn_freq: 0.1
+    head_drop_freq: 0.2
+    threshold: 0.7
+
+visPipe:
+  colormap: true
+  resize:
+    fx: 2.0
+    fy: 2.0
