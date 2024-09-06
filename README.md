@@ -9,3 +9,6 @@ Any publication must include a full citation to the paper in which the Data Sets
 # Sample videos
 1. https://drive.google.com/file/d/10Evma4Jkmn5H_nu-rZJOxPJ8Lx4_i2m9/view?usp=drive_link
 2. https://drive.google.com/file/d/1z7vNfgCQAbWVPxUZIRDGgk7pAdayjwvu/view?usp=drive_link
+
+# Paper (Open Access)
+https://www.mdpi.com/2079-9292/13/17/3502
